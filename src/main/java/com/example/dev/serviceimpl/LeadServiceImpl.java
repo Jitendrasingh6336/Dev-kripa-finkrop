@@ -230,8 +230,10 @@ public class LeadServiceImpl implements ILeadService {
         long approved = leadRepository.countApproved();
         long rejected = leadRepository.countRejected();
         long underReview = leadRepository.countUnderReview();
+        long newLeads = leadRepository.countNewLeads();
+        long followUpLeads = leadRepository.countFollowUpLeads();
 
-        LeadCountResponse response = new LeadCountResponse(total, approved, rejected, underReview);
+        LeadCountResponse response = new LeadCountResponse(total, approved, rejected, underReview,newLeads,followUpLeads);
 
 //        return new ApiResponse(true, "Lead count fetched successfully", response);
         return ApiResponse.builder()

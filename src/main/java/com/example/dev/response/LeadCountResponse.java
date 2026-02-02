@@ -13,4 +13,6 @@ public class LeadCountResponse {
 	    private long approvedLeads;
 	    private long rejectedLeads;
 	    private long underReviewLeads;
+	    private long newLeads;
+	    private long followUpLeads;
 }

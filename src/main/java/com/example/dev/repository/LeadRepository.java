@@ -59,6 +59,12 @@ public interface LeadRepository extends JpaRepository<Lead, String>{
 
     @Query("SELECT COUNT(l) FROM Lead l WHERE l.status = 'UNDER_REVIEW' AND l.isDeleted = false")
     long countUnderReview();
+    
+    @Query("SELECT COUNT(l) FROM Lead l WHERE l.status = 'NEW' AND l.isDeleted = false")
+    long countNewLeads();
+    
+    @Query("SELECT COUNT(l) FROM Lead l WHERE l.status = 'FOLLOW_UP' AND l.isDeleted = false")
+    long countFollowUpLeads();
 
 
 }
