@@ -3,6 +3,7 @@ package com.example.dev.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,15 +15,21 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.example.dev.model.LeadRemarksRequest;
 import com.example.dev.request.LeadRequest;
 import com.example.dev.request.UpdateLeadRequest;
 import com.example.dev.response.ApiResponse;
 import com.example.dev.service.ILeadService;
 import com.example.dev.util.Constants;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+
 @RestController
 @RequestMapping("/lead")
 @CrossOrigin("*")
+@Validated
 public class LeadController {
 	
 	@Autowired
@@ -30,7 +37,7 @@ public class LeadController {
 	
 	
 	@PostMapping("/api/v1/add")
-	public ResponseEntity<ApiResponse> addLead(@RequestBody LeadRequest request) {
+	public ResponseEntity<ApiResponse> addLead(@Valid @RequestBody LeadRequest request) {
 		return ResponseEntity.status(HttpStatus.OK).body(this.leadService.createLead(request));
 	}
 	
@@ -43,7 +50,7 @@ public class LeadController {
     }
 	
 	@GetMapping("/api/v1/get-lead")
-	public ResponseEntity<ApiResponse> getLead(@RequestParam("leadId") String id){
+	public ResponseEntity<ApiResponse> getLead(@Valid @RequestParam("leadId") @NotBlank(message = "id is required") String id){
 		return ResponseEntity.ok(this.leadService.getLeadById(id));
 	}
 	
@@ -65,15 +72,21 @@ public class LeadController {
     // ✅ Update Lead Status
     @PatchMapping("/api/v1/update-status")
     public ResponseEntity<ApiResponse> updateLeadStatus(
-            @RequestParam String id,
-            @RequestParam String status) {
+    		 @Valid
+    		 @RequestParam
+             @NotBlank(message = "Lead id is required")
+             String id,
+             @Valid
+             @RequestParam
+             @NotBlank(message = "Status is required")
+             String status) {
 
         return ResponseEntity.ok(leadService.updateLeadStatus(status, id));
     }
 
-    // ✅ Delete Lead (Optional)
+    //  Delete Lead (Optional)
     @DeleteMapping("/api/v1/delete")
-    public ResponseEntity<ApiResponse> deleteLead(@RequestParam String id) {
+    public ResponseEntity<ApiResponse> deleteLead(@Valid @RequestParam  @NotBlank(message = "Lead id is required") String id) {
         return ResponseEntity.ok(leadService.deleteLead(id));
     }
 	
@@ -81,5 +94,27 @@ public class LeadController {
     public ResponseEntity<ApiResponse> getLeadCounts() {
         return ResponseEntity.ok(leadService.getLeadCounts());
     }
+    
+    @GetMapping("/api/v1/get-recent-leads")
+	public ResponseEntity<ApiResponse> getRecentLeads(){
+		return ResponseEntity.ok(this.leadService.getRecentLeads());
+	}
+    
+    
+    @GetMapping("/api/v1/dashboard/loan-type-chart")
+    public ResponseEntity<ApiResponse> getLoanTypeChart() {
+        return ResponseEntity.ok(leadService.getLoanTypeChartData());
+    }
+    
+    //add remark api
+    @PutMapping("/api/v1/add/remarks")
+    public ResponseEntity<ApiResponse> addRemarks(@Valid @RequestParam  @NotBlank(message = "Lead id is required") String leadId,@RequestBody @Valid LeadRemarksRequest request) {
+    	
+        return ResponseEntity.ok(leadService.addLeadRemarks(leadId, request));
+    }
+
+
+    
+    
 
 }

@@ -57,35 +57,22 @@ public class Lead {
     
     @Pattern(regexp = "[A-Z]{5}[0-9]{4}[A-Z]{1}", message = "Invalid PAN card number")
     private String panCardNumber;
-    
-    @Min(value = 300, message = "Civil score must be at least 300")
-    @Max(value = 900, message = "Civil score cannot exceed 900")
-    private Integer civilScore;
-    
-    private String companyName;
+   
     
     @NotNull(message = "Loan amount is required")
     @Positive(message = "Loan amount must be greater than 0")
     private Double loanAmount;
 
     @Enumerated(EnumType.STRING)
-    @NotNull(message = "Employment type is required")
-    private EmployeementType employmentType;
+    @Column(nullable = false)
+    private MaritalStatus maritalStatus;
 
-    private Double inHandSalary;
+    private String spouseName;  
     
-    private Boolean pfDeduction;
-    
-    @NotBlank(message = "Pin code is required")
-    @Pattern(regexp = "^[1-9][0-9]{5}$", message = "Invalid pin code")
-    private String pinCode;
-    
-    private Double currentEmiAmount;
-    
-    private Integer companyExperience;
+    private String motherName;  
 
-     @Enumerated(EnumType.STRING)
-     @NotNull(message = "Service type is required")
+    @Enumerated(EnumType.STRING)
+    @NotNull(message = "Service type is required")
     private LoanType serviceType;
 
     private String remarks;
@@ -104,5 +91,42 @@ public class Lead {
 	@Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
 	private Boolean isActive = Boolean.TRUE;
 
-   
+	@OneToOne(mappedBy = "lead", cascade = CascadeType.ALL)
+    private Address address;
+
+    @OneToOne(mappedBy = "lead", cascade = CascadeType.ALL)
+    private PersonalLoanDetails personalLoanDetails;
+
+    @OneToOne(mappedBy = "lead", cascade = CascadeType.ALL)
+    private BusinessLoanDetails businessLoanDetails;
+    
+    @OneToOne(mappedBy = "lead", cascade = CascadeType.ALL)
+    private InstantLoanDetails instantLoanDetails;
+    
+    @OneToOne(mappedBy = "lead", cascade = CascadeType.ALL)
+    private CarLoanDetails carLoanDetails;
+
+    @OneToOne(mappedBy = "lead", cascade = CascadeType.ALL)
+    private CreditCardLoanDetails creditCardLoanDetails;
+
+    
+    @Enumerated(EnumType.STRING)
+    @NotNull(message = "Employment type is required")
+    private EmployeementType employmentType;
 }
+
+//@Enumerated(EnumType.STRING)
+//@NotNull(message = "Employment type is required")
+//private EmployeementType employmentType;
+//
+//private Double inHandSalary;
+
+//private Boolean pfDeduction;
+//
+//@NotBlank(message = "Pin code is required")
+//@Pattern(regexp = "^[1-9][0-9]{5}$", message = "Invalid pin code")
+//private String pinCode;
+//
+//private Double currentEmiAmount;
+//
+//private Integer companyExperience;

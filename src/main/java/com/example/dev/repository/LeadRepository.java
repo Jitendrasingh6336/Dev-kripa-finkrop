@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.example.dev.model.Lead;
 import com.example.dev.model.LeadStatus;
+import com.example.dev.request.LoanTypeCountProjection;
 
 public interface LeadRepository extends JpaRepository<Lead, String>{
 
@@ -65,6 +66,26 @@ public interface LeadRepository extends JpaRepository<Lead, String>{
     
     @Query("SELECT COUNT(l) FROM Lead l WHERE l.status = 'FOLLOW_UP' AND l.isDeleted = false")
     long countFollowUpLeads();
+    
+    @Query("""
+    		   SELECT l FROM Lead l
+    		   WHERE l.isDeleted = false
+    		   ORDER BY l.createdDate DESC
+    		""")
+    		List<Lead> findRecentLeads();
+
+    @Query("""
+    	    SELECT l.serviceType AS loanType, COUNT(l) AS count
+    	    FROM Lead l
+    	    WHERE l.isDeleted = false
+    	    GROUP BY l.serviceType
+    	    ORDER BY COUNT(l) DESC
+    	""")
+    	List<LoanTypeCountProjection> countLeadsByLoanType();
+
+    @Query("SELECT l FROM Lead l WHERE l.leadId = :leadId AND l.isDeleted = false")
+    Optional<Lead> findActiveLead(@Param("leadId") String leadId);
+
 
 
 }

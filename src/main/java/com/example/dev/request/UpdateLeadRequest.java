@@ -1,6 +1,5 @@
 package com.example.dev.request;
 
-import com.example.dev.model.Agent;
 import com.example.dev.model.EmployeementType;
 import com.example.dev.model.LeadSource;
 import com.example.dev.model.LeadStatus;

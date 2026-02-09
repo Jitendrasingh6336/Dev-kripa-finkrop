@@ -6,10 +6,8 @@ public enum LoanType {
 	    PERSONAL_LOAN,
 	    BUSINESS_LOAN,
 	    HOME_LOAN,
+	    INSTANT_LOAN,
 	    CAR_LOAN,
+	    CREDIT_CARD,
 	   
-	    EDUCATION_LOAN,
-	    GOLD_LOAN,
-	    CREDIT_CARD_LOAN,
-	    TOP_UP_LOAN
 }

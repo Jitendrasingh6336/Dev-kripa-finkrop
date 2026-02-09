@@ -16,7 +16,8 @@ public class JwtUtil {
 	private static final String SECRET = "a2VlcFNvbWVUaGluZ1NlY3VyZUFuZERvbnRTaGFyZEluUHVibGlj"; // example base64 string
 
     private final SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET));
-    private final long EXPIRATION_TIME = 1000 * 60 * 60; // 1 hour
+    
+    private final long JWT_EXPIRATION = 1000L * 60 * 60 * 24 * 7;
 
 
 // Generate token
@@ -24,7 +25,7 @@ public String generateToken(String email) {
     return Jwts.builder()
             .subject(email)
             .issuedAt(new Date())
-            .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+            .expiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION))
             .signWith(key)
             .compact();
 }

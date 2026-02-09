@@ -34,41 +34,33 @@ public class SecurityConfig {
 	    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
 	        http
+	            .cors(cors -> {})   // ✅ ENABLE CORS
 	            .csrf(csrf -> csrf.disable())
 	            .authorizeHttpRequests(auth -> auth
 
-	                // ✅ Allow HTML pages & static resources
 	                .requestMatchers(
-	                        "/", 
-	                        "/login.html",
-	                        "/dashboard.html",
-	                        "/**/*.html",
-	                        "/css/**",
-	                        "/js/**",
-	                        "/images/**"
+	                    "/auth/api/v1/login",
+	                    "/customer-query/api/v1/create",
+	                    "/career/api/v1/create",
+	                    "/lead/api/v1/add",
+	                    "/faqs/api/v1/get-all-faq",
+	                    "/user//api/v1/get-all-users",
+                        "/user/api/v1/count"
 	                ).permitAll()
 
-	                // ✅ Allow Auth & Public APIs
 	                .requestMatchers(
-	                        "/auth/api/v1/login",
-	                        "/user/api/v1/add",
-	                        "/lead/api/v1/add",
-	                        "/lead/api/v1/count"
+	                    "/",
+	                    "/**/*.html",
+	                    "/css/**",
+	                    "/js/**",
+	                    "/images/**"
 	                ).permitAll()
 
-	                // ✅ Secure APIs (JWT required)
-	                .requestMatchers(
-	                        "/lead/api/v1/get-leads",
-	                        "/lead/api/v1/update",
-	                        "/lead/api/v1/update-status",
-	                        "/lead/api/v1/delete",
-	                        "/api/users/**"
-	                ).authenticated()
-
-	                // ✅ Any other request needs authentication
 	                .anyRequest().authenticated()
 	            )
-	            .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+	            .exceptionHandling(ex -> ex
+	                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+	            )
 	            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
 	        return http.build();
