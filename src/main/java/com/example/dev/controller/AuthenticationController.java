@@ -51,7 +51,7 @@ private static final Logger logger = LoggerFactory.getLogger(AuthenticationContr
     }
 
    
-    @PostMapping("/api/v1/login")
+    @PostMapping("/api/v1/web/login")
     public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody LoginRequest loginRequest) {
 
         Map<String, Object> response = new HashMap<>();
@@ -82,7 +82,7 @@ private static final Logger logger = LoggerFactory.getLogger(AuthenticationContr
     }
 
 
-    @GetMapping("/api/v1/admin/profile")
+    @GetMapping("/api/v1/web/admin/profile")
     public ResponseEntity<Map<String, Object>> getProfile(Authentication authentication) {
 
         Map<String, Object> response = new HashMap<>();
@@ -95,7 +95,7 @@ private static final Logger logger = LoggerFactory.getLogger(AuthenticationContr
         
     }
     
-    @PostMapping("/api/v1/admin/change-password")
+    @PostMapping("/api/v1/web/admin/change-password")
     public  ResponseEntity<ApiResponse> changePassword(@Valid
             @RequestBody ChangePasswordRequest request,
             Authentication authentication) {

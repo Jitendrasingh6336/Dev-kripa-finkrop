@@ -34,13 +34,13 @@ public class CustomerQueryController {
 
 
 	 //  Create Customer Query
-    @PostMapping("/api/v1/create")
+    @PostMapping("/api/v1/web/create")
     public ApiResponse createCustomerQuery(@Valid @RequestBody QueryRequest queryRequest) {
         return customerQueryService.createCustomerQuery(queryRequest);
     }
 
     // Update Query Status
-    @PutMapping("/api/v1/update-status")
+    @PutMapping("/api/v1/web/update-status")
     public ApiResponse updateQueryStatus(@Valid @RequestParam
             @NotBlank(message = "Query id is required")
             String id,
@@ -52,7 +52,7 @@ public class CustomerQueryController {
         return customerQueryService.updateQueryStatus(id, status);
     }
     
-    @GetMapping("/api/v1/get-customer-query")
+    @GetMapping("/api/v1/web/get-customer-query")
     public ResponseEntity<ApiResponse> getLeads(
     		   @RequestParam(defaultValue = "0", required = false) Integer pageNumber,
                @RequestParam(defaultValue = Constants.DEFAULT_PAGE_LIMIT, required = false) Integer pageSize,
@@ -60,7 +60,7 @@ public class CustomerQueryController {
         return ResponseEntity.ok(this.customerQueryService.getAllCustomerQuerys(pageNumber, pageSize, search));
     }
     
-    @GetMapping("/api/v1/customer-query-by-id")
+    @GetMapping("/api/v1/web/customer-query-by-id")
     public ResponseEntity<ApiResponse> getCustomerQueryById(@Valid @RequestParam @NotBlank(message = "id is required") String id) {
         ApiResponse response = customerQueryService.getCustomerQueryById(id);
         return ResponseEntity.ok(response);

@@ -26,12 +26,12 @@ public class CarrerApplicationController {
 	@Autowired
 	private ICareerService careerService;
 	
-	@PostMapping("/api/v1/create")
+	@PostMapping("/api/v1/web/create")
     public ApiResponse createCareerApplication(@Valid CarrerRequest request) {
         return careerService.addCareerApplication(request);
     }
     
-    @GetMapping("/api/v1/get-careers-data")
+    @GetMapping("/api/v1/web/get-careers-data")
     public ResponseEntity<ApiResponse> getLeads(
     		   @RequestParam(defaultValue = "0", required = false) Integer pageNumber,
                @RequestParam(defaultValue = Constants.DEFAULT_PAGE_LIMIT, required = false) Integer pageSize,
@@ -40,13 +40,13 @@ public class CarrerApplicationController {
     }
     
     
-    @GetMapping("/api/v1/get-count")
+    @GetMapping("/api/v1/web/get-count")
     public ResponseEntity<ApiResponse> getCareerApplicationCount() {
         return ResponseEntity.ok(this.careerService.getCareerStatusCounts());
     }
     
-    //delete career application
-    @DeleteMapping("api/v1/delete")
+
+    @DeleteMapping("/api/v1/web/delete")
     public ResponseEntity<ApiResponse> deleteCareerApplication(
             @RequestParam String id) {
 
@@ -54,7 +54,7 @@ public class CarrerApplicationController {
         return ResponseEntity.ok(response);
     }
     
-    @GetMapping("/api/v1/get-career-by-id")
+    @GetMapping("/api/v1/web/get-career-by-id")
 	public ResponseEntity<ApiResponse> getCareerApplication(@RequestParam("id") String id){
 		return ResponseEntity.ok(this.careerService.getCareerApplicationById(id));
 	}

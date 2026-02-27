@@ -46,6 +46,18 @@ public interface FaqRepository extends JpaRepository<Faq, String>{
 	        String faqId
 	);
 
+	Page<Faq> findByIsDeletedFalse(Pageable pageable);
+
+	@Query("""
+		       SELECT f FROM Faq f
+		       WHERE f.isDeleted = false AND
+		       (
+		           LOWER(f.question) LIKE LOWER(CONCAT('%', :search, '%'))
+		           OR LOWER(f.answer) LIKE LOWER(CONCAT('%', :search, '%'))
+		       )
+		       """)
+		Page<Faq> searchFaqs(@Param("search") String search,
+		                     Pageable pageable);
 
 
 }

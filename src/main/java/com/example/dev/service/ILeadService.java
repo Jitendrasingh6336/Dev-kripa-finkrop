@@ -28,6 +28,8 @@ public interface ILeadService {
 	public ApiResponse getLoanTypeChartData();
 	
 	public ApiResponse addLeadRemarks(String leadId, LeadRemarksRequest request) ;
+	
+	public ApiResponse getLeadStatusChart();
 
 
 }

@@ -60,22 +60,24 @@ public class LeadRequest {
 		
 	    private Address address;
 
-	    private PersonalLoanDetails personalLoanDetails;
+	    private PersonalLoanDetailsRequest personalLoanDetails;
 
-	    private BusinessLoanDetails businessLoanDetails;
+	    private BusinessLoanDetailsRequest businessLoanDetails;
 	    
-	    private InstantLoanDetails instantLoanDetails;
+	    private InstantLoanDetailsRequest instantLoanDetails;
 	    
-	    private CarLoanDetails carLoanDetails;
+	    private CarLoanDetailsRequest carLoanDetails;
 	    
-	    private CreditCardLoanDetails creditCardLoanDetails;
+	    private CreditCardLoanDetailsRequest creditCardLoanDetails;
 	    
 	    private EmployeementType employmentType;
 
         private LocalDateTime createdDate;
+        
         private LocalDateTime updatedDate;
 
         private Boolean isDeleted = Boolean.FALSE;
+        
         private Boolean isActive = Boolean.TRUE;
 
 

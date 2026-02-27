@@ -24,6 +24,7 @@ public class Constants {
 	public static final String BAD_REQUEST = "Bad Request";
 	
 	public static final String CAREER_APPLICATION_IMG = "career";
+	public static final String EMPLOYEE_APPLICATION_IMG = "employee";
 	public static final String CAREER_FETCHED = "Carrer Application data fetched successfully";
 	public static final String USER_NOT_FOUND = "User not found";
 	public static final String STATUS_CHANGED_SUCCESSFULLY = "User status change successfully";
@@ -39,4 +40,10 @@ public class Constants {
 	
     public static final String ERROR = "error";
 	public static final String TOKEN_EXPIRED = "Token expired";
+	public static final String DEPARTMENT_CREATED_SUCCESSFULLY = "Department created successfully";
+	public static final String DEPARTMENT_FETCHED_SUCCESSFULLY = "Department fetched successfully";
+	public static final String DEPARTMENT_DELETE_SUCCESS = "Department delete successfully";
+	public static final String EMPLOYEE_CREATED_SUCCESSFULLY = "Employee created successfully";
+	public static final String EMPLOYEE_FETCHED_SUCCESSFULLY = "Employee fetched successfully";
+	public static final String EMPLOYEE_NOT_FOUND = "Employee not found";
 }

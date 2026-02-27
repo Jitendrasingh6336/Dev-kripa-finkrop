@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.dev.exception.ResourceNotFoundException;
 import com.example.dev.model.ChangePasswordRequest;
+import com.example.dev.model.Faq;
 import com.example.dev.model.Lead;
 import com.example.dev.model.LeadRemarksRequest;
 import com.example.dev.model.Role;
@@ -26,6 +27,7 @@ import com.example.dev.repository.UserRepository;
 import com.example.dev.request.PaginationRequest;
 import com.example.dev.request.UserRequest;
 import com.example.dev.response.ApiResponse;
+import com.example.dev.response.FaqResponse;
 import com.example.dev.response.LeadResponse;
 import com.example.dev.response.PaginatedResponse;
 import com.example.dev.response.UserCountResponse;
@@ -106,20 +108,23 @@ public class UserDetailsServiceImpl implements UserDetailsService,IUserService{
 	@Override
 	public ApiResponse getAllUsers(Integer pageNumber, Integer pageSize, String search) {
 
-	    PaginationRequest pagePaginationRequest = new PaginationRequest();
-	    pagePaginationRequest.setPageNumber(pageNumber);
-	    pagePaginationRequest.setPageSize(pageSize);
+		Pageable pageable = AppUtil.getPageable(pageNumber, pageSize);
+	    Page<User> userPage;
 
-	    Pageable pageableRequest = AppUtil.buildPageableRequest(pagePaginationRequest);
+	    if (search != null && !search.trim().isEmpty()) {
+	    	userPage = userRepository.searchUsers(search.trim(), pageable);
+	    } else {
+	    	userPage = userRepository.findByIsDeletedFalse(pageable);
+	    }
 
-	    Page<User> users = this.userRepository.findUsers(search, pageableRequest);
+	    // 🔹 Convert to DTO
+	    Page<UserResponse> responsePage =
+	    		userPage.map(this::UserToUserResponse);
 
 	    return ApiResponse.builder()
-	            .message(Constants.USER_FETCHED)
 	            .statusCode(HttpStatus.OK.value())
-	            .response(new PaginatedResponse<>(
-	                    users.map(this::UserToUserResponse)
-	            ))
+	            .message(Constants.USER_FETCHED)
+	            .response(new PaginatedResponse<>(responsePage))
 	            .build();
 	}
 

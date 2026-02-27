@@ -37,5 +37,19 @@ public interface UserRepository extends JpaRepository<User, String> {
     long countByIsDeletedFalseAndIsActiveTrue();
 
     long countByIsDeletedFalseAndIsActiveFalse();
+    
+    Page<User> findByIsDeletedFalse(Pageable pageable);
+
+    @Query("""
+           SELECT u FROM User u 
+           WHERE u.isDeleted = false
+           AND (
+                LOWER(u.username) LIKE LOWER(CONCAT('%', :search, '%'))
+                OR LOWER(u.email) LIKE LOWER(CONCAT('%', :search, '%'))
+           )
+           """)
+    Page<User> searchUsers(@Param("search") String search, Pageable pageable);
+    
+    
 
 }

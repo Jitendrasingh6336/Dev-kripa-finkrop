@@ -73,18 +73,27 @@ public class CustomerQueryServiceImpl implements ICustomerQueryService {
 	@Override
 	public ApiResponse getAllCustomerQuerys(Integer pageNumber, Integer pageSize, String search) {
 
-	    PaginationRequest pagePaginationRequest = new PaginationRequest();
-	    pagePaginationRequest.setPageNumber(pageNumber);
-	    pagePaginationRequest.setPageSize(pageSize);
+		 // 🔹 Use Common Pagination Utility
+	    Pageable pageable = AppUtil.getPageable(pageNumber, pageSize);
 
-	    Pageable pageableRequest = AppUtil.buildPageableRequest(pagePaginationRequest);
+	    Page<CustomerQuery> queryPage;
 
-	    Page<CustomerQuery> queries =
-	            customerQueryRepository.findCustomerQueries(search, pageableRequest);
+	    if (search != null && !search.trim().isEmpty()) {
+	        queryPage = customerQueryRepository
+	                .searchCustomerQueries(search.trim(), pageable);
+	    } else {
+	        queryPage = customerQueryRepository
+	                .findByIsDeletedFalse(pageable);
+	    }
 
-	    return ApiResponse.builder().message(Constants.CUSTOMER_QUERY_FETCHED).statusCode(HttpStatus.OK.value()).response(new PaginatedResponse<>(
-	                    queries.map(this::customerQueryToResponse)
-	            ))
+	    // 🔹 Convert to DTO
+	    Page<CustomerQueryResponse> responsePage =
+	            queryPage.map(this::customerQueryToResponse);
+
+	    return ApiResponse.builder()
+	            .statusCode(HttpStatus.OK.value())
+	            .message(Constants.CUSTOMER_QUERY_FETCHED)
+	            .response(new PaginatedResponse<>(responsePage))
 	            .build();
 	}
 

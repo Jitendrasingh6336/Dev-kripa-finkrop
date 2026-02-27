@@ -42,6 +42,22 @@ public interface CareerRepository extends JpaRepository<CareerApplication, Strin
 
 
 	Optional<CareerApplication> findByIdAndIsDeleted(String id, Boolean isDeleted);
+	
+	Page<CareerApplication> findByIsDeletedFalse(Pageable pageable);
+	
+	@Query("""
+		       SELECT c FROM CareerApplication c
+		       WHERE c.isDeleted = false AND
+		       (
+		           LOWER(c.name) LIKE LOWER(CONCAT('%', :search, '%'))
+		           OR LOWER(c.email) LIKE LOWER(CONCAT('%', :search, '%'))
+		           OR c.phone LIKE CONCAT('%', :search, '%')
+		       )
+		       """)
+		Page<CareerApplication> searchCareerApplications(@Param("search") String search,
+		                                                 Pageable pageable);
+
+
 
 
 

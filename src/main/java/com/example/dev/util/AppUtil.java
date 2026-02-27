@@ -27,39 +27,59 @@ public class AppUtil {
 	public static final long MAX_PROFILE_PIC_UPLOAD_SIZE = 10 * 1024 * 1024;
 	
 	private final Cloudinary cloudinary;
+	 private static final int DEFAULT_PAGE_NUMBER = 0;
+	    private static final int DEFAULT_PAGE_SIZE = 10;
+	    private static final String DEFAULT_SORT_BY = "createdDate";
+	    private static final Sort.Direction DEFAULT_SORT_DIRECTION = Sort.Direction.DESC;
 
     public AppUtil(Cloudinary cloudinary) {
         this.cloudinary = cloudinary;
     }
 	
-	public static <T> boolean validateSortKey(Class<T> modelClass, String sortKey) {
-		try {
-			Class<?> currentClass = modelClass;
-			while (currentClass != null) {
-				boolean isValidKey = Arrays.stream(currentClass.getDeclaredFields())
-						.anyMatch(f -> f.getName().equals(sortKey));
-				if (isValidKey) {
-					return true; // Found the sortKey
-				}
-				currentClass = currentClass.getSuperclass();
-			}
-			throw new IllegalArgumentException("Invalid sort key: " + sortKey);
-		} catch (IllegalArgumentException e) {
-			throw new IllegalArgumentException("Invalid sort key: " + sortKey, e);
-		}
-	}
+    public static Pageable getPageable(Integer pageNumber, Integer pageSize) {
 
-	public static Pageable buildPageableRequest(PaginationRequest pageRequest) {
-		String sortKey = pageRequest.getSortKey();
-		if (sortKey != null && pageRequest.getSortKey().equals("roleName"))
-			sortKey = "role.roleName";
-//		else if (sortKey != null && AppUtil.validateSortKey(User.class, sortKey))
-			;
-		Sort sort = Sort.by((pageRequest.getSortDirection() != null && !pageRequest.getSortDirection().isEmpty()
-				? Direction.valueOf(pageRequest.getSortDirection())
-				: Direction.ASC), sortKey != null ? sortKey : "createdDate");
-		return PageRequest.of(pageRequest.getPageNumber(), pageRequest.getPageSize(), sort);
-	}
+        int page = (pageNumber == null || pageNumber < 0) 
+                ? DEFAULT_PAGE_NUMBER 
+                : pageNumber;
+
+        int size = (pageSize == null || pageSize <= 0) 
+                ? DEFAULT_PAGE_SIZE 
+                : pageSize;
+
+        return PageRequest.of(
+                page,
+                size,
+                Sort.by(DEFAULT_SORT_DIRECTION, DEFAULT_SORT_BY)
+        );
+    }
+//	public static <T> boolean validateSortKey(Class<T> modelClass, String sortKey) {
+//		try {
+//			Class<?> currentClass = modelClass;
+//			while (currentClass != null) {
+//				boolean isValidKey = Arrays.stream(currentClass.getDeclaredFields())
+//						.anyMatch(f -> f.getName().equals(sortKey));
+//				if (isValidKey) {
+//					return true; // Found the sortKey
+//				}
+//				currentClass = currentClass.getSuperclass();
+//			}
+//			throw new IllegalArgumentException("Invalid sort key: " + sortKey);
+//		} catch (IllegalArgumentException e) {
+//			throw new IllegalArgumentException("Invalid sort key: " + sortKey, e);
+//		}
+//	}
+//
+//	public static Pageable buildPageableRequest(PaginationRequest pageRequest) {
+//		String sortKey = pageRequest.getSortKey();
+//		if (sortKey != null && pageRequest.getSortKey().equals("roleName"))
+//			sortKey = "role.roleName";
+////		else if (sortKey != null && AppUtil.validateSortKey(User.class, sortKey))
+//			;
+//		Sort sort = Sort.by((pageRequest.getSortDirection() != null && !pageRequest.getSortDirection().isEmpty()
+//				? Direction.valueOf(pageRequest.getSortDirection())
+//				: Direction.ASC), sortKey != null ? sortKey : "createdDate");
+//		return PageRequest.of(pageRequest.getPageNumber(), pageRequest.getPageSize(), sort);
+//	}
 	
 	public String uploadPhoto(MultipartFile file, String destinationPath) {
 		String fileName = null;

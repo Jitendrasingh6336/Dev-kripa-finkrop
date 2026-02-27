@@ -24,7 +24,7 @@ public class FaqController {
     /**
      * ➕ Add FAQ
      */
-    @PostMapping("/api/v1/add")
+    @PostMapping("/api/v1/web/add")
     public ResponseEntity<ApiResponse> addFaq(@Valid @RequestBody FaqRequest faqRequest) {
 
         ApiResponse response = faqService.addFaq(faqRequest);
@@ -34,7 +34,7 @@ public class FaqController {
     /**
      * 📄 Get All FAQs (Pagination + Search)
      */
-    @GetMapping("/api/v1/get-all-faq")
+    @GetMapping("/api/v1/web/get-all-faq")
     public ResponseEntity<ApiResponse> getAllFaqs(
             @RequestParam(defaultValue = "0") Integer pageNumber,
             @RequestParam(defaultValue = "10") Integer pageSize,
@@ -49,7 +49,7 @@ public class FaqController {
     /**
      * ✏️ Update FAQ
      */
-    @PutMapping("/api/v1/update-faq")
+    @PutMapping("/api/v1/web/update-faq")
     public ResponseEntity<ApiResponse> updateFaq(@Valid @RequestBody UpdateFaqRequest updateFaqRequest) {
 
         ApiResponse response = faqService.updateFaq(updateFaqRequest);
@@ -59,7 +59,7 @@ public class FaqController {
     /**
      * 🗑️ Delete FAQ (Soft Delete)
      */
-    @DeleteMapping("/api/v1/delete-faq")
+    @DeleteMapping("/api/v1/web/delete-faq")
     public ResponseEntity<ApiResponse> deleteFaq(@Valid @NotBlank(message = "id is required")
             @RequestParam String faqId) {
 

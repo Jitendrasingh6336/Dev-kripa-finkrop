@@ -1,18 +1,15 @@
 package com.example.dev.serviceimpl;
 
-import java.net.Authenticator.RequestorType;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
 import com.example.dev.exception.BadRequestException;
 import com.example.dev.exception.ResourceAlreadyExistException;
 import com.example.dev.exception.ResourceNotFoundException;
@@ -20,7 +17,6 @@ import com.example.dev.model.Address;
 import com.example.dev.model.BusinessLoanDetails;
 import com.example.dev.model.CarLoanDetails;
 import com.example.dev.model.CreditCardLoanDetails;
-import com.example.dev.model.EmployeementType;
 import com.example.dev.model.InstantLoanDetails;
 import com.example.dev.model.Lead;
 import com.example.dev.model.LeadRemarksRequest;
@@ -36,6 +32,7 @@ import com.example.dev.response.ApiResponse;
 import com.example.dev.response.LeadCountResponse;
 import com.example.dev.response.LeadResponse;
 import com.example.dev.response.PaginatedResponse;
+import com.example.dev.response.StatusChartResponse;
 import com.example.dev.service.ILeadService;
 import com.example.dev.util.AppUtil;
 import com.example.dev.util.Constants;
@@ -230,68 +227,61 @@ public class LeadServiceImpl implements ILeadService {
 	@Override
 	public ApiResponse updateLead(UpdateLeadRequest updateLeadRequest) {
 		// TODO Auto-generated method stub
-//		Lead lead = leadRepository.findByLeadIdAndIsDeleted(updateLeadRequest.getId(),Boolean.FALSE)
-//	            .orElseThrow(() -> new ResourceNotFoundException("Lead not found with id: " + updateLeadRequest.getId()));
-//
-//	    // ✅ Check Email Exists (except current lead)
-//	    if (!lead.getEmail().equals(updateLeadRequest.getEmail())
-//	            && leadRepository.existsByEmailAndIsDeletedFalse(updateLeadRequest.getEmail())) {
-//	        throw new ResourceAlreadyExistException("Email already exists");
-//	    }
-//
-//	    // ✅ Check Contact Number Exists (except current lead)
-//	    if (!lead.getCustomerContactNumber().equals(updateLeadRequest.getCustomerContactNumber())
-//	            && leadRepository.existsByCustomerContactNumberAndIsDeletedFalse(updateLeadRequest.getCustomerContactNumber())) {
-//	        throw new ResourceAlreadyExistException("Contact number already exists");
-//	    }
-//
-//	    // ✅ Check PAN Exists (except current lead)
-//	    if (!lead.getPanCardNumber().equals(updateLeadRequest.getPanCardNumber())
-//	            && leadRepository.existsByPanCardNumberAndIsDeletedFalse(updateLeadRequest.getPanCardNumber())) {
-//	        throw new ResourceAlreadyExistException("PAN card number already exists");
-//	    }
-//
-//	    // ✅ Update Fields
-//	    lead.setCustomerName(updateLeadRequest.getCustomerName());
-//	    lead.setEmail(updateLeadRequest.getEmail());
-//	    lead.setCustomerContactNumber(updateLeadRequest.getCustomerContactNumber());
-//	    lead.setCompanyName(updateLeadRequest.getCompanyName());
-//	    lead.setCompanyExperience(updateLeadRequest.getCompanyExperience());
-//	    lead.setEmploymentType(updateLeadRequest.getEmploymentType());
-//	    lead.setCivilScore(updateLeadRequest.getCivilScore());
-//	    lead.setLoanAmount(updateLeadRequest.getLoanAmount());
-//	    lead.setInHandSalary(updateLeadRequest.getInHandSalary());
-//	    lead.setCurrentEmiAmount(updateLeadRequest.getCurrentEmiAmount());
-//	    lead.setPfDeduction(updateLeadRequest.getPfDeduction());
-//	    lead.setPinCode(updateLeadRequest.getPinCode());
-//	    lead.setRemarks(updateLeadRequest.getRemarks());
-//	    lead.setServiceType(updateLeadRequest.getServiceType());
-//	    lead.setPanCardNumber(updateLeadRequest.getPanCardNumber());
-//	    lead.setStatus(updateLeadRequest.getStatus());
-//	    lead.setUpdatedDate(LocalDateTime.now());
-//
-//	    Lead updatedLead = leadRepository.save(lead);
-//
-//	    return ApiResponse.builder()
-//	            .statusCode(HttpStatus.OK.value())
-//	            .message("Lead updated successfully")
-//	            .response(updatedLead)
-//	            .build();
-//	}
-//
-//	@Override
-//	public ApiResponse getLeadById(String id) {
-//		// TODO Auto-generated method stub
-//		
-//		Lead lead = leadRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Lead not found with id: " + id));
-//	    LeadResponse response = this.LeadToLeadResponse(lead);
-//
-//	    return ApiResponse.builder()
-//	            .message("Lead fetched successfully")
-//	            .statusCode(HttpStatus.OK.value())
-//	            .response(response)
-//	            .build();
-		return null;
+		Lead lead = leadRepository.findByLeadIdAndIsDeleted(updateLeadRequest.getId(),Boolean.FALSE)
+	            .orElseThrow(() -> new ResourceNotFoundException("Lead not found with id: " + updateLeadRequest.getId()));
+
+	    // ✅ Check Email Exists (except current lead)
+	    if (!lead.getEmail().equals(updateLeadRequest.getEmail())
+	            && leadRepository.existsByEmailAndIsDeletedFalse(updateLeadRequest.getEmail())) {
+	        throw new ResourceAlreadyExistException("Email already exists");
+	    }
+
+	    // ✅ Check Contact Number Exists (except current lead)
+	    if (!lead.getCustomerContactNumber().equals(updateLeadRequest.getCustomerContactNumber())
+	            && leadRepository.existsByCustomerContactNumberAndIsDeletedFalse(updateLeadRequest.getCustomerContactNumber())) {
+	        throw new ResourceAlreadyExistException("Contact number already exists");
+	    }
+
+	    // ✅ Check PAN Exists (except current lead)
+	    if (!lead.getPanCardNumber().equals(updateLeadRequest.getPanCardNumber())
+	            && leadRepository.existsByPanCardNumberAndIsDeletedFalse(updateLeadRequest.getPanCardNumber())) {
+	        throw new ResourceAlreadyExistException("PAN card number already exists");
+	    }
+
+	    // ✅ Update Fields
+	    lead.setCustomerName(updateLeadRequest.getCustomerName());
+	    lead.setEmail(updateLeadRequest.getEmail());
+	    lead.setCustomerContactNumber(updateLeadRequest.getCustomerContactNumber());
+	    lead.setEmploymentType(updateLeadRequest.getEmploymentType());
+	    lead.setLoanAmount(updateLeadRequest.getLoanAmount());
+	    lead.setRemarks(updateLeadRequest.getRemarks());
+	    lead.setServiceType(updateLeadRequest.getServiceType());
+	    lead.setPanCardNumber(updateLeadRequest.getPanCardNumber());
+	    lead.setStatus(updateLeadRequest.getStatus());
+	    lead.setUpdatedDate(LocalDateTime.now());
+
+	    Lead updatedLead = leadRepository.save(lead);
+
+	    return ApiResponse.builder()
+	            .statusCode(HttpStatus.OK.value())
+	            .message("Lead updated successfully")
+	            .response(updatedLead)
+	            .build();
+	}
+
+	@Override
+	public ApiResponse getLeadById(String id) {
+		// TODO Auto-generated method stub
+		
+		Lead lead = leadRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Lead not found with id: " + id));
+	    LeadResponse response = this.leadToLeadResponse(lead);
+
+	    return ApiResponse.builder()
+	            .message("Lead fetched successfully")
+	            .statusCode(HttpStatus.OK.value())
+	            .response(response)
+	            .build();
+		
 	}
 	
 
@@ -311,15 +301,23 @@ public class LeadServiceImpl implements ILeadService {
 	@Override
 	public ApiResponse getAllLeads(Integer pageNumber, Integer pageSize, String search) {
 		// TODO Auto-generated method stub
-		PaginationRequest pagePaginationRequest = new PaginationRequest();
-		pagePaginationRequest.setPageNumber(pageNumber);
-		pagePaginationRequest.setPageSize(pageSize);
-		Pageable pageableRequest = AppUtil.buildPageableRequest(pagePaginationRequest);
+		Pageable pageable = AppUtil.getPageable(pageNumber, pageSize);
 
-		Page<Lead> leads = this.leadRepository.findLeads(search, pageableRequest);
+	    Page<Lead> leadPage;
 
-		return ApiResponse.builder().message(Constants.LEAD_FETCHED).statusCode(HttpStatus.OK.value())
-				.response(new PaginatedResponse<>(leads.map(this::leadToLeadResponse))).build();
+	    if (search != null && !search.trim().isEmpty()) {
+	        leadPage = leadRepository.searchLeads(search.trim(), pageable);
+	    } else {
+	        leadPage = leadRepository.findByIsDeletedFalse(pageable);
+	    }
+
+	    Page<LeadResponse> responsePage = leadPage.map(this::leadToLeadResponse);
+
+	    return ApiResponse.builder()
+	            .statusCode(HttpStatus.OK.value())
+	            .message("Leads fetched successfully")
+	            .response(new PaginatedResponse<>(responsePage))
+	            .build();
 	}
 
 
@@ -344,25 +342,34 @@ public class LeadServiceImpl implements ILeadService {
 	@Override
 	public ApiResponse getLeadsByStatus(String status,Integer pageNumber, Integer pageSize, String search) {
 		// TODO Auto-generated method stub
-		 LeadStatus leadStatus;
+		LeadStatus leadStatus;
+	    try {
+	        leadStatus = LeadStatus.valueOf(status.toUpperCase());
+	    } catch (IllegalArgumentException e) {
+	        throw new BadRequestException("Invalid Lead Status: " + status);
+	    }
 
-		    try {
-		        leadStatus = LeadStatus.valueOf(status.toUpperCase());
-		    } catch (IllegalArgumentException e) {
-		        throw new RuntimeException("Invalid Lead Status: " + status);
-		    }
+	    // 🔹 Use Common Pagination Method
+	    Pageable pageable = AppUtil.getPageable(pageNumber, pageSize);
 
-		    PaginationRequest pagePaginationRequest = new PaginationRequest();
-		    pagePaginationRequest.setPageNumber(pageNumber);
-		    pagePaginationRequest.setPageSize(pageSize);
-		    Pageable pageableRequest = AppUtil.buildPageableRequest(pagePaginationRequest);
+	    Page<Lead> leadPage;
 
-		    Page<Lead> leadsPage = leadRepository.findLeadsByStatusAndSearch(leadStatus, search, pageableRequest);
-		    return ApiResponse.builder()
-		            .message("Leads fetched successfully by status")
-		            .statusCode(HttpStatus.OK.value())
-		            .response(leadsPage)
-		            .build();
+	    if (search != null && !search.trim().isEmpty()) {
+	        leadPage = leadRepository
+	                .findLeadsByStatusAndSearch(leadStatus, search.trim(), pageable);
+	    } else {
+	        leadPage = leadRepository
+	                .findByStatusAndIsDeletedFalse(leadStatus, pageable);
+	    }
+
+	    // 🔹 Map to DTO
+	    Page<LeadResponse> responsePage = leadPage.map(this::leadToLeadResponse);
+
+	    return ApiResponse.builder()
+	            .statusCode(HttpStatus.OK.value())
+	            .message("Leads fetched successfully by status")
+	            .response(new PaginatedResponse<>(responsePage))
+	            .build();
 	}
 
 	@Override
@@ -454,11 +461,39 @@ public class LeadServiceImpl implements ILeadService {
 		            .build();
 		}
 
-		@Override
-		public ApiResponse getLeadById(String id) {
-			// TODO Auto-generated method stub
-			return null;
-		}
+//		@Override
+//		public ApiResponse getLeadById(String id) {
+//			// TODO Auto-generated method stub
+//			Lead lead = leadRepository.findByLeadIdAndIsDeleted(id, Boolean.FALSE)
+//		            .orElseThrow(() -> 
+//		                    new ResourceNotFoundException("Lead not found with id: " + id));
+//
+//		    LeadResponse response = leadToLeadResponse(lead);
+//
+//		    return ApiResponse.builder()
+//		            .statusCode(HttpStatus.OK.value())
+//		            .message("Lead fetched successfully")
+//		            .response(response)
+//		            .build();
+//		}
 
+		@Override
+		public ApiResponse getLeadStatusChart() {
+
+		    List<Object[]> results = leadRepository.countLeadsByStatus();
+
+		    List<StatusChartResponse> chartData = results.stream()
+		            .map(obj -> new StatusChartResponse(
+		                    obj[0].toString(),
+		                    (Long) obj[1]
+		            ))
+		            .toList();
+
+		    return ApiResponse.builder()
+		            .statusCode(HttpStatus.OK.value())
+		            .message("Lead status chart data fetched successfully")
+		            .response(chartData)
+		            .build();
+		}
 
 }

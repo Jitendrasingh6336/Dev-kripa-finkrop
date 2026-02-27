@@ -31,6 +31,19 @@ public interface CustomerQueryRepository extends JpaRepository<CustomerQuery, St
 	            Pageable pageable
 	    );
 	
+	Page<CustomerQuery> findByIsDeletedFalse(Pageable pageable);
+
+	@Query("""
+		       SELECT c FROM CustomerQuery c
+		       WHERE c.isDeleted = false AND
+		       (
+		           LOWER(c.username) LIKE LOWER(CONCAT('%', :search, '%'))
+		           OR LOWER(c.email) LIKE LOWER(CONCAT('%', :search, '%'))
+		           OR c.message LIKE CONCAT('%', :search, '%'))
+		       """)
+		Page<CustomerQuery> searchCustomerQueries(@Param("search") String search,
+		                                          Pageable pageable);
+
 	
 
 }

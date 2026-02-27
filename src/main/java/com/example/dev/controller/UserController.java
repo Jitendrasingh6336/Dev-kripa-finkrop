@@ -30,25 +30,25 @@ public class UserController {
 	@Autowired
 	private IUserService userService;
 	
-	@PostMapping("/api/v1/add")
+	@PostMapping("/api/v1/web/add")
 	public ResponseEntity<ApiResponse> addUser(@Valid @RequestBody UserRequest request) {
 		
 		return ResponseEntity.status(HttpStatus.OK).body(this.userService.addUser(request));
 	}
 	
-	@GetMapping("/api/v1/count")
+	@GetMapping("/api/v1/web/count")
     public ResponseEntity<ApiResponse> getUsersCount() {
         return ResponseEntity.ok(userService.getUserCounts());
     }
 	
 
-	 @DeleteMapping("/api/v1/delete")
+	 @DeleteMapping("/api/v1/web/delete")
 	    public ResponseEntity<ApiResponse> deleteUser(@NotBlank(message = "id is required") @RequestParam String id) {
 	        return ResponseEntity.ok(userService.deleteUser(id));
 	 }
 	 
 	 
-	 @GetMapping("/api/v1/get-all-users")
+	 @GetMapping("/api/v1/web/get-all-users")
 	    public ResponseEntity<ApiResponse> getUsers(
 	    		   @RequestParam(defaultValue = "0", required = false) Integer pageNumber,
 	               @RequestParam(defaultValue = Constants.DEFAULT_PAGE_LIMIT, required = false) Integer pageSize,
@@ -57,7 +57,7 @@ public class UserController {
 		 return ResponseEntity.ok(this.userService.getAllUsers(pageNumber, pageSize, search));
 	 }
 	 
-	 @PutMapping("/api/v1/status-change")
+	 @PutMapping("/api/v1/web/status-change")
 	 public ResponseEntity<ApiResponse> changeStatus(@Valid @RequestParam @NotBlank(message = ValidationConstants.USER_ID_REQUIRED) String id){
 			return ResponseEntity.ok(this.userService.changeUserStatus(id));
 		}

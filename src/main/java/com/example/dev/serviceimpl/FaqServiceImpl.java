@@ -12,7 +12,6 @@ import com.example.dev.exception.ResourceNotFoundException;
 import com.example.dev.model.Faq;
 import com.example.dev.repository.FaqRepository;
 import com.example.dev.request.FaqRequest;
-import com.example.dev.request.PaginationRequest;
 import com.example.dev.request.UpdateFaqRequest;
 import com.example.dev.response.ApiResponse;
 import com.example.dev.response.FaqResponse;
@@ -60,15 +59,25 @@ public class FaqServiceImpl implements IFaqService{
 
 	@Override
 	public ApiResponse getAllFaq(Integer pageNumber, Integer pageSize, String search) {
-		// TODO Auto-generated method stub
-		PaginationRequest pagePaginationRequest = new PaginationRequest();
-		pagePaginationRequest.setPageNumber(pageNumber);
-		pagePaginationRequest.setPageSize(pageSize);
-		Pageable pageableRequest = AppUtil.buildPageableRequest(pagePaginationRequest);
-		Page<Faq> leads = this.faqRepository.findFaqs(search, pageableRequest);
+		
+	    Pageable pageable = AppUtil.getPageable(pageNumber, pageSize);
+	    Page<Faq> faqPage;
 
-		return ApiResponse.builder().message(Constants.FAQ_FETCHED).statusCode(HttpStatus.OK.value())
-				.response(new PaginatedResponse<>(leads.map(this::faqToFaqResponse))).build();
+	    if (search != null && !search.trim().isEmpty()) {
+	        faqPage = faqRepository.searchFaqs(search.trim(), pageable);
+	    } else {
+	        faqPage = faqRepository.findByIsDeletedFalse(pageable);
+	    }
+
+	    // 🔹 Convert to DTO
+	    Page<FaqResponse> responsePage =
+	            faqPage.map(this::faqToFaqResponse);
+
+	    return ApiResponse.builder()
+	            .statusCode(HttpStatus.OK.value())
+	            .message(Constants.FAQ_FETCHED)
+	            .response(new PaginatedResponse<>(responsePage))
+	            .build();
 	}
 	
 	public FaqResponse faqToFaqResponse(Faq faq) {

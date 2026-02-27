@@ -7,16 +7,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
 import com.example.dev.exception.ResourceAlreadyExistException;
 import com.example.dev.exception.ResourceNotFoundException;
 import com.example.dev.model.CareerApplication;
 import com.example.dev.model.CareerStatus;
-import com.example.dev.model.Faq;
-import com.example.dev.model.Lead;
 import com.example.dev.repository.CareerRepository;
 import com.example.dev.request.CarrerRequest;
-import com.example.dev.request.PaginationRequest;
 import com.example.dev.response.ApiResponse;
 import com.example.dev.response.CareerResponse;
 import com.example.dev.response.CareerStatusCountResponse;
@@ -65,20 +61,27 @@ public class CarrerServiceImpl implements ICareerService{
 	@Override
 	public ApiResponse getAllCareerApplication(Integer pageNumber, Integer pageSize, String search) {
 
-	    PaginationRequest pagePaginationRequest = new PaginationRequest();
-	    pagePaginationRequest.setPageNumber(pageNumber);
-	    pagePaginationRequest.setPageSize(pageSize);
+		 Pageable pageable = AppUtil.getPageable(pageNumber, pageSize);
 
-	    Pageable pageableRequest = AppUtil.buildPageableRequest(pagePaginationRequest);
+		    Page<CareerApplication> careerPage;
 
-	    Page<CareerApplication> careers =careerRepository.findCareerApplications(search, pageableRequest);
+		    if (search != null && !search.trim().isEmpty()) {
+		        careerPage = careerRepository
+		                .searchCareerApplications(search.trim(), pageable);
+		    } else {
+		        careerPage = careerRepository
+		                .findByIsDeletedFalse(pageable);
+		    }
 
-	    return ApiResponse.builder()
-	            .message(Constants.CAREER_FETCHED)
-	            .statusCode(HttpStatus.OK.value())
-	            .response(new PaginatedResponse<>(
-	                    careers.map(this::careerToCareerResponse)
-	            )).build();
+		    // 🔹 Convert to DTO
+		    Page<CareerResponse> responsePage =
+		            careerPage.map(this::careerToCareerResponse);
+
+		    return ApiResponse.builder()
+		            .statusCode(HttpStatus.OK.value())
+		            .message(Constants.CAREER_FETCHED)
+		            .response(new PaginatedResponse<>(responsePage))
+		            .build();
 	}
 	private CareerResponse careerToCareerResponse(CareerApplication career) {
 

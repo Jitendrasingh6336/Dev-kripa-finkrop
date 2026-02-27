@@ -44,6 +44,18 @@ public interface LeadRepository extends JpaRepository<Lead, String>{
 
 	boolean existsByCustomerContactNumberAndIsDeletedFalse(String customerContactNumber);
 	
+	@Query("""
+		       SELECT l FROM Lead l
+		       WHERE l.isDeleted = false AND
+		       (
+		           LOWER(l.customerName) LIKE LOWER(CONCAT('%', :search, '%')) OR
+		           LOWER(l.email) LIKE LOWER(CONCAT('%', :search, '%')) OR
+		           l.customerContactNumber LIKE CONCAT('%', :search, '%')
+		       )
+		       """)
+		Page<Lead> searchLeads(@Param("search") String search, Pageable pageable);
+
+	
 	boolean existsByPanCardNumberAndIsDeletedFalse(String panCardNumber);
 
 	Optional<Lead> findByLeadIdAndIsDeleted(String id, Boolean false1);
@@ -85,6 +97,19 @@ public interface LeadRepository extends JpaRepository<Lead, String>{
 
     @Query("SELECT l FROM Lead l WHERE l.leadId = :leadId AND l.isDeleted = false")
     Optional<Lead> findActiveLead(@Param("leadId") String leadId);
+
+
+    @Query("SELECT l.status, COUNT(l) FROM Lead l GROUP BY l.status")
+    List<Object[]> countLeadsByStatus();
+    
+    Page<Lead> findByIsDeletedFalse(Pageable pageable);
+    
+    Page<Lead> findByStatusAndIsDeletedFalse(LeadStatus status, Pageable pageable);
+    
+    
+    
+    
+
 
 
 
