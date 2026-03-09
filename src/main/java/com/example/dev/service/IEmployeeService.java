@@ -1,11 +1,10 @@
 package com.example.dev.service;
+import com.example.dev.request.Employee1Request;
 import com.example.dev.request.EmployeeRequest;
 import com.example.dev.request.UpdateEmployeeRequest;
 import com.example.dev.response.ApiResponse;
 
 public interface IEmployeeService {
-
-	public ApiResponse addEmployee(EmployeeRequest employeeRequest);
 
 	public ApiResponse getAllEmployee(Integer pageNumber, Integer pageSize, String search);
 	
@@ -18,4 +17,6 @@ public interface IEmployeeService {
 	public ApiResponse getAllEmployeeByName();
 	
 	public ApiResponse getAllEmployeeNames();
+	
+	public ApiResponse addEmp(Employee1Request employee1Request);
 }

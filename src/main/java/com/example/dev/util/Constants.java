@@ -46,4 +46,10 @@ public class Constants {
 	public static final String EMPLOYEE_CREATED_SUCCESSFULLY = "Employee created successfully";
 	public static final String EMPLOYEE_FETCHED_SUCCESSFULLY = "Employee fetched successfully";
 	public static final String EMPLOYEE_NOT_FOUND = "Employee not found";
+	
+	//leave constant
+	public static final String LEAVE_NOT_FOUND = "Leave not found";
+	public static final String LEAVE_DELETE_SUCCESS = "Leave deleted successfully";
+	public static final String MANAGERS_GET_SUCCESSFULLY = "Get all managers successfully";
+	public static final String ATTENDANCE_ADD_SUCCESSFULLY = "Attendance Marked Successfully";
 }

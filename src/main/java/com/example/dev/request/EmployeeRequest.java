@@ -5,8 +5,6 @@ import java.time.LocalDateTime;
 import org.springframework.web.multipart.MultipartFile;
 import com.example.dev.model.EmployeeStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
-
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;

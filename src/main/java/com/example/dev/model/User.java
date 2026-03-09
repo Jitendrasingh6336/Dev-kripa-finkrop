@@ -41,6 +41,7 @@ public class User {
 	@Email(message = "Invalid email format")
     private String email;
     
+	@Column(length = 50)
     @Enumerated(EnumType.STRING) 
     @NotNull(message = "Role is required")
     private Role role; 

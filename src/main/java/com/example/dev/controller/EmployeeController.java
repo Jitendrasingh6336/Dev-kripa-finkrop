@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import com.example.dev.request.Employee1Request;
 import com.example.dev.request.EmployeeRequest;
 import com.example.dev.request.UpdateEmployeeRequest;
 import com.example.dev.response.ApiResponse;
@@ -35,12 +36,25 @@ public class EmployeeController {
 	private IEmployeeService employeeService;
 	
 	
-	@PostMapping("/web/add")
-	public ResponseEntity<ApiResponse> addEmployee(EmployeeRequest request) {
-
-		    System.err.println("employee");
-	        return ResponseEntity.status(HttpStatus.CREATED).body(employeeService.addEmployee(request));
-	 }
+	@PostMapping("/web/add1")
+		public ResponseEntity<ApiResponse> addEmp(@Valid Employee1Request request) {
+		    System.err.println("employee: " + request.getProfile());
+		    System.err.println(request);
+		    return ResponseEntity
+		            .status(HttpStatus.CREATED)
+		            .body(employeeService.addEmp(request));
+	}
+//	@PostMapping(value = "/web/add1", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//	public ResponseEntity<ApiResponse> addEmp(
+//	        @ModelAttribute @Valid Employee1Request request
+//	) {
+//	    System.err.println("employee: " + request.getProfile());
+//	    System.err.println(request);
+//
+//	    return ResponseEntity
+//	            .status(HttpStatus.CREATED)
+//	            .body(employeeService.addEmp(request));
+//	}
 	
 	//get employee
 	@GetMapping("/web/get-employees")

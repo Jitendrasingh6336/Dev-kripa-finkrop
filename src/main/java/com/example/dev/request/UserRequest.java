@@ -29,4 +29,7 @@ public class UserRequest {
 	    private Role role;
 	    
 	    private UserStatus status;
+	    
+	    private String employeeId;   
+
 }

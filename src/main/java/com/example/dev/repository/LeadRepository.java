@@ -11,6 +11,8 @@ import org.springframework.data.repository.query.Param;
 
 import com.example.dev.model.Lead;
 import com.example.dev.model.LeadStatus;
+import com.example.dev.model.Role;
+import com.example.dev.model.User;
 import com.example.dev.request.LoanTypeCountProjection;
 
 public interface LeadRepository extends JpaRepository<Lead, String>{
@@ -106,11 +108,10 @@ public interface LeadRepository extends JpaRepository<Lead, String>{
     
     Page<Lead> findByStatusAndIsDeletedFalse(LeadStatus status, Pageable pageable);
     
+
+    List<Lead> findByManagerId(String managerId);
+
+
+	List<Lead> findByManagerIdAndIsDeleted(String managerId, Boolean isDeleted);
     
-    
-    
-
-
-
-
 }

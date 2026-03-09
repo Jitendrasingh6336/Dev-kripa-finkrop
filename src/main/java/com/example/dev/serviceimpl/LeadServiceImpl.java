@@ -1,15 +1,23 @@
 package com.example.dev.serviceimpl;
 
+import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.example.dev.exception.BadRequestException;
 import com.example.dev.exception.ResourceAlreadyExistException;
 import com.example.dev.exception.ResourceNotFoundException;
@@ -23,7 +31,10 @@ import com.example.dev.model.LeadRemarksRequest;
 import com.example.dev.model.LeadStatus;
 import com.example.dev.model.LoanType;
 import com.example.dev.model.PersonalLoanDetails;
+import com.example.dev.model.User;
 import com.example.dev.repository.LeadRepository;
+import com.example.dev.repository.UserRepository;
+import com.example.dev.request.AssignLeadRequest;
 import com.example.dev.request.LeadRequest;
 import com.example.dev.request.LoanTypeCountProjection;
 import com.example.dev.request.PaginationRequest;
@@ -36,6 +47,7 @@ import com.example.dev.response.StatusChartResponse;
 import com.example.dev.service.ILeadService;
 import com.example.dev.util.AppUtil;
 import com.example.dev.util.Constants;
+import com.opencsv.CSVReader;
 
 @Service
 public class LeadServiceImpl implements ILeadService {
@@ -43,6 +55,9 @@ public class LeadServiceImpl implements ILeadService {
 	
 	@Autowired
 	private LeadRepository leadRepository;
+	
+	@Autowired
+	private UserRepository userRepository;
 	
 	@Autowired
 	private AppUtil appUtil;
@@ -496,4 +511,123 @@ public class LeadServiceImpl implements ILeadService {
 		            .build();
 		}
 
-}
+		@Override
+		public ApiResponse assignLeadsToManager(AssignLeadRequest request) {
+			// TODO Auto-generated method stub
+			User manager = userRepository.findByIdAndIsDeleted(request.getManagerId(),Boolean.FALSE)
+	                .orElseThrow(() -> new RuntimeException("Manager not found"));
+			
+			List<Lead> leads = leadRepository.findAllById(request.getLeadIds());
+			for (Lead lead : leads) {
+	            lead.setManager(manager);
+	        }
+
+	        leadRepository.saveAll(leads);
+	        
+	        return ApiResponse.builder()
+		            .statusCode(HttpStatus.OK.value()).message("Leads assigned successfully") .build();
+		}
+
+		@Override
+		public ApiResponse getManagersLeads(String managerId) {
+			// TODO Auto-generated method stub
+		List<Lead> leads=leadRepository.findByManagerIdAndIsDeleted(managerId,Boolean.FALSE);
+		return ApiResponse.builder()
+	            .statusCode(HttpStatus.OK.value()).message("Leads fetch successfully").response(leads) .build();
+		}
+		
+		
+
+		private void importCSV(MultipartFile file) throws Exception {
+
+		    CSVReader reader = new CSVReader(new InputStreamReader(file.getInputStream()));
+
+		    List<String[]> rows = reader.readAll();
+
+		    rows.remove(0); // header remove
+
+		    for (String[] row : rows) {
+
+		        Lead lead = Lead.builder()
+		                .customerName(row[0])
+		                .customerContactNumber(row[1])
+		                .email(row[2])
+		                .serviceType(LoanType.valueOf(row[3]))
+		                .loanAmount(Double.parseDouble(row[4]))
+		                .status(LeadStatus.NEW)
+		                .createdDate(LocalDateTime.now())
+		                .updatedDate(LocalDateTime.now())
+		                .isDeleted(false)
+		                .isActive(true)
+		                .build();
+
+		        leadRepository.save(lead);
+		    }
+		}
+		
+		private void importExcel(MultipartFile file) throws Exception {
+
+		    Workbook workbook = new XSSFWorkbook(file.getInputStream());
+
+		    Sheet sheet = workbook.getSheetAt(0);
+
+		    for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+
+		        Row row = sheet.getRow(i);
+
+		        Lead lead = Lead.builder()
+		                .customerName(row.getCell(0).getStringCellValue())
+		                .customerContactNumber(row.getCell(1).getStringCellValue())
+		                .email(row.getCell(2).getStringCellValue())
+		                .serviceType(LoanType.valueOf(row.getCell(3).getStringCellValue()))
+		                .loanAmount(row.getCell(4).getNumericCellValue())
+		                .status(LeadStatus.NEW)
+		                .createdDate(LocalDateTime.now())
+		                .updatedDate(LocalDateTime.now())
+		                .isDeleted(false)
+		                .isActive(true)
+		                .build();
+
+		        leadRepository.save(lead);
+		    }
+
+		    workbook.close();
+		}
+
+		@Override
+		public ApiResponse importLeads(MultipartFile file) {
+			// TODO Auto-generated method stub
+			String fileName = file.getOriginalFilename();
+
+		    try {
+
+		        if (fileName == null) {
+		            throw new RuntimeException("File name is missing");
+		        }
+
+		        if (fileName.endsWith(".csv")) {
+		            importCSV(file);
+		        } 
+		        else if (fileName.endsWith(".xlsx")) {
+		            importExcel(file);
+		        } 
+		        else {
+		            throw new RuntimeException("Invalid file type. Only CSV and Excel allowed");
+		        }
+
+		        return ApiResponse.builder()
+		                .statusCode(HttpStatus.OK.value())
+		                .message("Leads imported successfully")
+		                .build();
+
+		    } catch (Exception e) {
+
+		        return ApiResponse.builder()
+		                .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+		                .message("Failed to import leads: " + e.getMessage())
+		                .build();
+		    }
+		}
+
+	}
+

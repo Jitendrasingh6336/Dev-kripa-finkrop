@@ -1,6 +1,9 @@
 package com.example.dev.service;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.example.dev.model.LeadRemarksRequest;
+import com.example.dev.request.AssignLeadRequest;
 import com.example.dev.request.LeadRequest;
 import com.example.dev.request.UpdateLeadRequest;
 import com.example.dev.response.ApiResponse;
@@ -31,5 +34,10 @@ public interface ILeadService {
 	
 	public ApiResponse getLeadStatusChart();
 
+	public ApiResponse assignLeadsToManager(AssignLeadRequest request);
+	
+	public ApiResponse getManagersLeads(String managerId);
+	
+	public ApiResponse importLeads(MultipartFile file);
 
 }

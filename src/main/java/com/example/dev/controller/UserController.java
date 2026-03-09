@@ -60,6 +60,12 @@ public class UserController {
 	 @PutMapping("/api/v1/web/status-change")
 	 public ResponseEntity<ApiResponse> changeStatus(@Valid @RequestParam @NotBlank(message = ValidationConstants.USER_ID_REQUIRED) String id){
 			return ResponseEntity.ok(this.userService.changeUserStatus(id));
-		}
+     }
 	 
+	 //get all managers
+	 @GetMapping("/api/v1/web/managers")
+	 public ResponseEntity<ApiResponse> getAllManagers() {
+		 
+	     return ResponseEntity.ok(userService.getAllManagers());
+	 }
 }

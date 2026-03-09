@@ -21,5 +21,7 @@ public interface IUserService {
 	
 	public ApiResponse changePassword(String email, ChangePasswordRequest request);
 	
+	public ApiResponse getAllManagers();
+	
 
 }

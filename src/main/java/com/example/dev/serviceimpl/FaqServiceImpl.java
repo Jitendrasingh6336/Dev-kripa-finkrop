@@ -68,8 +68,6 @@ public class FaqServiceImpl implements IFaqService{
 	    } else {
 	        faqPage = faqRepository.findByIsDeletedFalse(pageable);
 	    }
-
-	    // 🔹 Convert to DTO
 	    Page<FaqResponse> responsePage =
 	            faqPage.map(this::faqToFaqResponse);
 

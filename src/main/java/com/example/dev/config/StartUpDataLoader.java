@@ -11,7 +11,6 @@ import com.example.dev.model.Role;
 import com.example.dev.model.User;
 import com.example.dev.model.UserStatus;
 import com.example.dev.repository.UserRepository;
-
 import lombok.RequiredArgsConstructor;
 
 @Configuration

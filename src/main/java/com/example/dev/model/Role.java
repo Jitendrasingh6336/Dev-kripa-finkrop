@@ -4,6 +4,7 @@ public enum Role {
 
 	    ADMIN,
 	    MANAGER,
-	    TELECALLER,
-	    SALES_EXCUTIVE
+	    EMPLOYEE,
+	    SUPPORT,
+	    HR
 }

@@ -11,9 +11,11 @@ import org.springframework.stereotype.Service;
 import com.example.dev.exception.ResourceAlreadyExistException;
 import com.example.dev.exception.ResourceNotFoundException;
 import com.example.dev.model.Department;
-import com.example.dev.model.Employee;
+import com.example.dev.model.Employee1;
 import com.example.dev.repository.DepartmentRepository;
-import com.example.dev.repository.EmployeeRepository;
+import com.example.dev.repository.Employee1Repository;
+
+import com.example.dev.request.Employee1Request;
 import com.example.dev.request.EmployeeRequest;
 import com.example.dev.request.UpdateEmployeeRequest;
 import com.example.dev.response.ApiResponse;
@@ -28,52 +30,25 @@ import com.example.dev.util.Constants;
 public class EmployeeServiceImpl implements IEmployeeService {
 
 	@Autowired
-	private EmployeeRepository employeeRepository;
+	private Employee1Repository employeeRepository;
 	
 	@Autowired
 	private DepartmentRepository departmentRepository;
 	
 	@Autowired
+	private Employee1Repository employee1Repository;
+	
+	@Autowired
 	private AppUtil appUtil;
 	
-	@Override
-	public ApiResponse addEmployee(EmployeeRequest employeeRequest) {
-		// TODO Auto-generated method stub
-		
-		Department department = departmentRepository.findById(employeeRequest.getDepartmentId())
-			    .orElseThrow(() -> new ResourceNotFoundException("Department not found"));
-		
-
-		    Employee employee = Employee.builder()
-		            .firstName(employeeRequest.getFirstName()).lastName(employeeRequest.getLastName()).email(employeeRequest.getEmail())
-		            .phone(employeeRequest.getPhone()) .username(employeeRequest.getUsername())
-		            .password(employeeRequest.getPassword()).dateOfBirth(employeeRequest.getDateOfBirth())
-		            .address(employeeRequest.getAddress()).designation(employeeRequest.getDesignation())
-		            .joiningDate(employeeRequest.getJoiningDate()).salary(employeeRequest.getSalary())
-		            .status(employeeRequest.getStatus()).department(department) .isActive(Boolean.TRUE) .isDeleted(Boolean.FALSE)
-		            .createdDate(LocalDateTime.now()).updatedDate(LocalDateTime.now())
-		            .build();
-
-		    if (employeeRequest.getProfilePhoto() != null) {
-				String fileName = this.appUtil.uploadPhoto(employeeRequest.getProfilePhoto(), Constants.EMPLOYEE_APPLICATION_IMG);
-				employee.setProfilePhoto(fileName);
-			} 
-
-		    Employee savedEmployee = employeeRepository.save(employee);
-
-		    return ApiResponse.builder()
-		            .statusCode(HttpStatus.CREATED.value())
-		            .message(Constants.EMPLOYEE_CREATED_SUCCESSFULLY)
-		            .response(savedEmployee)
-		            .build();
-	}
+	
 
 	@Override
 	public ApiResponse getAllEmployee(Integer pageNumber, Integer pageSize, String search) {
 		// TODO Auto-generated method stub
 		
 		 Pageable pageable = AppUtil.getPageable(pageNumber, pageSize);
-		    Page<Employee> employeePage;
+		    Page<Employee1> employeePage;
 
 		    if (search != null && !search.trim().isEmpty()) {
 		        employeePage = employeeRepository.searchEmployees(search.trim(), pageable);
@@ -97,12 +72,12 @@ public class EmployeeServiceImpl implements IEmployeeService {
 	public ApiResponse updateEmployee(UpdateEmployeeRequest updateEmployeeRequest) {
 		// TODO Auto-generated method stub
 		
-	    Employee employee = employeeRepository.findById(updateEmployeeRequest.getId())
+		Employee1 employee = employeeRepository.findById(updateEmployeeRequest.getId())
 	            .orElseThrow(() -> new ResourceNotFoundException(
 	                    "Employee not found with id: " + updateEmployeeRequest.getId()));
 
 	    
-	    Optional<Employee> existingEmailEmployee = employeeRepository
+	    Optional<Employee1> existingEmailEmployee = employeeRepository
 	            .findByEmailIgnoreCase(updateEmployeeRequest.getEmail());
 
 	    if (existingEmailEmployee.isPresent() &&
@@ -111,7 +86,7 @@ public class EmployeeServiceImpl implements IEmployeeService {
 	    }
 
 	   
-	    Optional<Employee> existingUsernameEmployee = employeeRepository
+	    Optional<Employee1> existingUsernameEmployee = employeeRepository
 	            .findByUsernameIgnoreCase(updateEmployeeRequest.getUsername());
 
 	    if (existingUsernameEmployee.isPresent() &&
@@ -130,8 +105,6 @@ public class EmployeeServiceImpl implements IEmployeeService {
 	    employee.setAddress(updateEmployeeRequest.getAddress());
 	    employee.setDesignation(updateEmployeeRequest.getDesignation());
 	    employee.setJoiningDate(updateEmployeeRequest.getJoiningDate());
-	    employee.setSalary(updateEmployeeRequest.getSalary());
-	    employee.setStatus(updateEmployeeRequest.getStatus());
 	    employee.setDepartment(updateEmployeeRequest.getDepartment());
 
 	    // Save updated employee
@@ -145,7 +118,7 @@ public class EmployeeServiceImpl implements IEmployeeService {
 	@Override
 	public ApiResponse deleteEmployee(String id) {
 		// TODO Auto-generated method stub
-		Employee employee = this.employeeRepository.findByIdAndIsDeleted(id, Boolean.FALSE)
+		Employee1 employee = this.employeeRepository.findByIdAndIsDeleted(id, Boolean.FALSE)
 				.orElseThrow(() -> new ResourceNotFoundException(Constants.FAQ_NOT_FOUND));
 		employee.setIsActive(Boolean.FALSE);
 		employee.setIsDeleted(Boolean.TRUE);
@@ -155,9 +128,10 @@ public class EmployeeServiceImpl implements IEmployeeService {
 		
 	}
 
-	public EmployeeResponse employeeToEmployeeResponse(Employee employee) {
+	public EmployeeResponse employeeToEmployeeResponse(Employee1 employee) {
 
 	    return EmployeeResponse.builder()
+	    		.id(employee.getId())
 	            .firstName(employee.getFirstName())
 	            .lastName(employee.getLastName())
 	            .email(employee.getEmail())
@@ -172,7 +146,7 @@ public class EmployeeServiceImpl implements IEmployeeService {
 	public ApiResponse getEmployeeById(String id) {
 		// TODO Auto-generated method stub
 		   
-	    Employee employee = employeeRepository.findByIdAndIsDeleted(id, Boolean.FALSE)
+	    Employee1 employee = employeeRepository.findByIdAndIsDeleted(id, Boolean.FALSE)
 	            .orElseThrow(() -> new ResourceNotFoundException(Constants.EMPLOYEE_NOT_FOUND));
 
 	    EmployeeResponse employeeResponse = employeeToEmployeeResponse(employee);
@@ -187,7 +161,7 @@ public class EmployeeServiceImpl implements IEmployeeService {
 	@Override
 	public ApiResponse getAllEmployeeByName() {
 		// TODO Auto-generated method stub
-	    List<Employee> employeeList = employeeRepository.findByIsDeletedFalse();
+	    List<Employee1> employeeList = employeeRepository.findByIsDeletedFalse();
 
 	    List<EmployeeResponse> responseList = employeeList.stream()
 	            .map(this::employeeToEmployeeResponse)
@@ -203,7 +177,7 @@ public class EmployeeServiceImpl implements IEmployeeService {
 	@Override
 	public ApiResponse getAllEmployeeNames() {
 		// TODO Auto-generated method stub
-		List<Employee> employeeList = employeeRepository.findAllActiveEmployees();
+		List<Employee1> employeeList = employeeRepository.findAllActiveEmployees();
 
 	    List<EmployeeNameResponse> nameList = employeeList.stream()
 	            .map(emp -> EmployeeNameResponse.builder().firstName(emp.getFirstName()).lastName(emp.getLastName()).build()).toList();
@@ -212,6 +186,43 @@ public class EmployeeServiceImpl implements IEmployeeService {
 	            .statusCode(HttpStatus.OK.value())
 	            .message("Employee names fetched successfully")
 	            .response(nameList)
+	            .build();
+	}
+
+	@Override
+	public ApiResponse addEmp(Employee1Request employee1Request) {
+
+	    Department department = null;
+	    if (employee1Request.getDepartmentId() != null) {
+	        department = departmentRepository.findById(employee1Request.getDepartmentId())
+	                .orElseThrow(() -> new RuntimeException("Department not found"));
+	    }
+
+	    Employee1 employee = Employee1.builder()
+	            .name(employee1Request.getName()).firstName(employee1Request.getFirstName()).lastName(employee1Request.getLastName())
+	            .address(employee1Request.getAddress()).designation(employee1Request.getDesignation())
+	            .email(employee1Request.getEmail()).password(employee1Request.getPassword()).phone(employee1Request.getPhone())
+	            .username(employee1Request.getUsername()).dateOfBirth(employee1Request.getDateOfBirth()) .joiningDate(employee1Request.getJoiningDate())
+	            .employeeStatus(employee1Request.getEmployeeStatus()).isActive(Boolean.TRUE).isDeleted(Boolean.FALSE)
+	            .createdDate(LocalDateTime.now()).updatedDate(LocalDateTime.now())
+	            .department(department)
+	            .build();
+
+	    // Upload profile
+	    if (employee1Request.getProfile() != null) {
+	        String fileName = appUtil.uploadPhoto(
+	                employee1Request.getProfile(),
+	                Constants.EMPLOYEE_APPLICATION_IMG
+	        );
+	        employee.setProfile(fileName);
+	    }
+
+	    Employee1 savedEmployee = employee1Repository.save(employee);
+
+	    return ApiResponse.builder()
+	            .statusCode(HttpStatus.CREATED.value())
+	            .message("Employee created successfully")
+	            .response(savedEmployee)
 	            .build();
 	}
 }

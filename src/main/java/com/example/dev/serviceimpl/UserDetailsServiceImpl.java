@@ -14,21 +14,15 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import com.example.dev.exception.ResourceNotFoundException;
 import com.example.dev.model.ChangePasswordRequest;
-import com.example.dev.model.Faq;
-import com.example.dev.model.Lead;
-import com.example.dev.model.LeadRemarksRequest;
+import com.example.dev.model.Employee1;
 import com.example.dev.model.Role;
 import com.example.dev.model.User;
-import com.example.dev.model.UserStatus;
+import com.example.dev.repository.Employee1Repository;
 import com.example.dev.repository.UserRepository;
-import com.example.dev.request.PaginationRequest;
 import com.example.dev.request.UserRequest;
 import com.example.dev.response.ApiResponse;
-import com.example.dev.response.FaqResponse;
-import com.example.dev.response.LeadResponse;
 import com.example.dev.response.PaginatedResponse;
 import com.example.dev.response.UserCountResponse;
 import com.example.dev.response.UserResponse;
@@ -45,6 +39,9 @@ public class UserDetailsServiceImpl implements UserDetailsService,IUserService{
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
+	@Autowired
+	private Employee1Repository employeeRepository;
+	
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
@@ -88,6 +85,31 @@ public class UserDetailsServiceImpl implements UserDetailsService,IUserService{
 		            .isDeleted(Boolean.FALSE).status(userRequest.getStatus())
 		            .build();
 		    User savedUser = userRepository.save(user);
+		    
+		    // ✅ Only if role = EMPLOYEE
+		    if (userRequest.getRole() == Role.EMPLOYEE) {
+
+		        if (userRequest.getEmployeeId() == null) {
+		            return ApiResponse.builder()
+		                    .statusCode(HttpStatus.BAD_REQUEST.value())
+		                    .message("EmployeeId is required for EMPLOYEE role")
+		                    .build();
+		        }
+
+		        Employee1 employee = employeeRepository.findByIdAndIsDeleted(userRequest.getEmployeeId(),Boolean.FALSE)
+		                .orElseThrow(() -> new RuntimeException("Employee not found"));
+
+		        // Check already linked
+		        if (employee.getUser() != null) {
+		            return ApiResponse.builder()
+		                    .statusCode(HttpStatus.BAD_REQUEST.value())
+		                    .message("User already created for this employee")
+		                    .build();
+		        }
+
+		        employee.setUser(savedUser);
+		        employeeRepository.save(employee);
+		    }
 
 		    return ApiResponse.builder().statusCode(HttpStatus.CREATED.value())
 					.message(Constants.USER_CREATED_SUCCESSFULLY).response(savedUser).build();
@@ -203,4 +225,12 @@ public class UserDetailsServiceImpl implements UserDetailsService,IUserService{
 	        return ApiResponse.builder().message(Constants.PASSWORD_CHANGED_SUCCESSFULLY).statusCode(HttpStatus.OK.value()).response(user)
 					.build();
 	    }
+
+	 @Override
+	 public ApiResponse getAllManagers() {
+		
+		List<User> users=userRepository.findByRoleAndIsDeletedFalseAndIsActiveTrue(Role.MANAGER);
+		 return ApiResponse.builder().message(Constants.MANAGERS_GET_SUCCESSFULLY).statusCode(HttpStatus.OK.value()).response(users)
+					.build();
+	 }
 }

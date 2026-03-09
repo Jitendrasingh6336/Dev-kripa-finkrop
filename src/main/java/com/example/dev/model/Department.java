@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -32,7 +35,8 @@ public class Department {
 	private String description;
 	
 	@OneToMany(mappedBy = "department", fetch = FetchType.LAZY)
-    private List<Employee> employees;
+	@JsonIgnore
+    private List<Employee1> employees;
 
 	@CreatedDate
 	@Column(nullable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")

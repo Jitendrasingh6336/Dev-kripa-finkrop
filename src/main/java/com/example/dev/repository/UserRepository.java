@@ -1,5 +1,6 @@
 package com.example.dev.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -50,6 +51,8 @@ public interface UserRepository extends JpaRepository<User, String> {
            """)
     Page<User> searchUsers(@Param("search") String search, Pageable pageable);
     
+    List<User> findByRoleAndIsDeletedFalseAndIsActiveTrue(Role role);
+
     
 
 }
